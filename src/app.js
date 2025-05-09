@@ -1,14 +1,17 @@
 import express from 'express';
-import PM from './ProductManager.js';
+import PM from './ProductManager/ProductManager.js';
+import CM from './CartManager/CartManager.js';
 
 const app = express();
-
 const PORT = 8080;
 
 const ProductManager = new PM('./products.json');
+const CartManager = new CM('./carts.json');
+
 
 app.use(express.json());
 
+// Peticiones para Productos
 app.get('/products', async (req, res) => {
     try {
         const products = await ProductManager.getProducts();
@@ -28,7 +31,7 @@ app.get('/products/:pid', async (req, res) => {
         }
         res.json(product);
     } catch (error) {
-        res.status(500).json({ error: 'Error al obtener productos' });
+        res.status(500).json({ error: 'Error al obtener producto' });
     }
 });
 
@@ -62,6 +65,49 @@ app.delete('/products/:pid', async (req, res) => {
         res.status(404).json({ error: error.message });
     }
 });
+
+
+// Peticiones para Carritos
+app.post('/carts', async (req, res) => {
+    try {
+        const newCart = await CartManager.addCart();
+        res.status(201).json({ message: 'Carrito creado', cart: newCart });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al crear el carrito' });
+    }
+});
+
+app.get('/carts/:cid', async (req, res) => {
+    const cartId = parseInt(req.params.cid);
+
+    try {
+        const cart = await CartManager.getCartById(cartId);
+        if (!cart) {
+            return res.status(404).json({ error: 'Carrito no encontrado' });
+        }
+        res.json(cart.products);
+    } catch (error) {
+        res.status(500).json({ error: 'Error al obtener el carrito' });
+    }
+});
+
+app.post('/carts/:cid/product/:pid', async (req, res) => {
+    const cartId = parseInt(req.params.cid);
+    const productId = parseInt(req.params.pid);
+
+    try {
+        const product = await ProductManager.getProductById(productId);
+        if (!product) {
+            return res.status(404).json({ error: 'Producto no encontrado' });
+        }
+
+        const updatedCart = await CartManager.addProductToCart(cartId, productId);
+        res.json({ message: 'Producto agregado al carrito', cart: updatedCart });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al agregar producto al carrito' });
+    }
+});
+
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);

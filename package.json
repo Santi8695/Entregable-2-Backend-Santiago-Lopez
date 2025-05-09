@@ -1,15 +1,22 @@
 {
   "name": "preentrega2",
   "version": "1.0.0",
-  "main": "index.js",
+  "type": "module",
+  "main": "src/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/app.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
-    "express": "^5.1.0"
-  }
+    "express": "^4.18.2",
+    "nodemon": "^3.1.10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Santi8695/Entregable-2-Backend-Santiago-Lopez.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Santi8695/Entregable-2-Backend-Santiago-Lopez/issues"
+  },
+  "homepage": "https://github.com/Santi8695/Entregable-2-Backend-Santiago-Lopez#readme",
+  "description": ""
 }
